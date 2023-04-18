@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-contract LFGFragments is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
+contract LFGCosmeticsV2 is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     CountersUpgradeable.Counter private _tokenIdCounter;
@@ -18,13 +18,13 @@ contract LFGFragments is Initializable, ERC721Upgradeable, ERC721EnumerableUpgra
     }
 
     function initialize() initializer public {
-        __ERC721_init("LFG fragments", "LFG");
+        __ERC721_init("LFG Cosmetics", "LFGc");
         __ERC721Enumerable_init();
         __Ownable_init();
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "http://data.lifeforce.games";
+        return "https://dataV2.lifeforce.games/";
     }
 
     function safeMint(address to) public onlyOwner {
