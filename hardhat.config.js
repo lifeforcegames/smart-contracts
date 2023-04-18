@@ -1,5 +1,6 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@openzeppelin/hardhat-upgrades");
+require("hardhat-deploy");
 
 const mnemonic_dev = "make fiber supply goose garbage stick confirm analyst avoid liar first vibrant";
 
