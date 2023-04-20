@@ -1,53 +1,71 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "hardhat/console.sol";
 
-contract LFGCosmetics is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
-    using CountersUpgradeable for CountersUpgradeable.Counter;
+contract LFGCosmetics is
+	UUPSUpgradeable,
+	ERC721EnumerableUpgradeable,
+	AccessControlUpgradeable
+{
+	using CountersUpgradeable for CountersUpgradeable.Counter;
 
-    CountersUpgradeable.Counter private _tokenIdCounter;
+	CountersUpgradeable.Counter private _tokenIdCounter;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
+	bytes32 public constant MINTER_AUTHORITY_ROLE = keccak256("MINTER_AUTHORITY_ROLE");
+	bytes32 public constant UPGRADE_AUTHORITY_ROLE = keccak256("UPGRADE_AUTHORITY_ROLE");
 
-    function initialize() initializer public {
-        __ERC721_init("LFG Cosmetics", "LFGc");
-        __ERC721Enumerable_init();
-        __Ownable_init();
-    }
+	/// @custom:oz-upgrades-unsafe-allow constructor
+	constructor() {
+		_disableInitializers();
+	}
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "https://data.lifeforce.games/";
-    }
+	function initialize() public initializer {
+		__ERC721_init("LFG Cosmetics", "LFGc");
+		__ERC721Enumerable_init();
+        __UUPSUpgradeable_init();
 
-    function safeMint(address to) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-    }
+		// set up roles
+		_setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _setupRole(MINTER_AUTHORITY_ROLE, _msgSender());
+		_setupRole(UPGRADE_AUTHORITY_ROLE, _msgSender());
+        
+	}
 
-    // The following functions are overrides required by Solidity.
+	function _baseURI() internal pure override returns (string memory) {
+		return "https://data.lifeforce.games/";
+	}
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
-        internal
-        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
-    {
-        super._beforeTokenTransfer(from, to, tokenId, batchSize);
-    }
+	function safeMint(address to) public onlyRole(MINTER_AUTHORITY_ROLE) {
+		uint256 tokenId = _tokenIdCounter.current();
+		_tokenIdCounter.increment();
+		_safeMint(to, tokenId);
+	}
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
+	/*************************************************************************************************
+	                                            Overrides
+	 *************************************************************************************************/
+	function supportsInterface(
+		bytes4 interfaceId
+	) public view override(AccessControlUpgradeable, ERC721EnumerableUpgradeable) returns (bool) {
+		return super.supportsInterface(interfaceId);
+	}
+
+	/*************************************************************************************************
+	                                            UUPS
+	 *************************************************************************************************/
+	function _authorizeUpgrade(
+		address newImplementation
+	) internal override onlyRole(UPGRADE_AUTHORITY_ROLE) {}
+
+	/**
+	 * @dev This empty reserved space is put in place to allow future versions to add new
+	 * variables without shifting down storage in the inheritance chain.
+	 * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+	 */
+	uint256[50] private __gap;
 }

@@ -2,7 +2,7 @@ require("@nomicfoundation/hardhat-toolbox");
 require("@openzeppelin/hardhat-upgrades");
 require("hardhat-deploy");
 
-const mnemonic_dev = "make fiber supply goose garbage stick confirm analyst avoid liar first vibrant";
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -15,10 +15,13 @@ module.exports = {
             },
         },
     },
+    etherscan: {
+        //apiKey: process.env.ETHERSCAN_API_KEY,
+    },
     networks: {
         hardhat: {
             accounts: {
-                mnemonic: mnemonic_dev,
+                mnemonic: process.env.MNEMONIC,
             },
             chainId: 1337,
             //allowUnlimitedContractSize: true,
@@ -30,21 +33,21 @@ module.exports = {
         },
 
         arbitrum: {
-            url: "https://arbitrum-mainnet.infura.io/v3/b50e70f52289474bb110c0a4ac8edcd4",
+            url: "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
             chainId: 42161,
             accounts: {
-                mnemonic: mnemonic_dev,
+                mnemonic: process.env.MNEMONIC,
             },
             metadataURI: "https://data.lifeforce.games",
         },
 
         arbitrum_goerli: {
-            url: "https://arbitrum-goerli.infura.io/v3/b50e70f52289474bb110c0a4ac8edcd4",
+            url: "https://arb-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
             chainId: 421613,
             accounts: {
-                mnemonic: mnemonic_dev,
+                mnemonic: process.env.MNEMONIC,
             },
-            metadataURI: "https://data.lifeforce.games",
+            metadataURI: "https://data-test.lifeforce.games",
         },
     },
     namedAccounts: {

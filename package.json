@@ -1,13 +1,13 @@
 {
-    "name": "nft-smart-contract",
+    "name": "lfg-smart-contracts",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
         "test": "clear && npx hardhat test",
         "dev-deploy": "npx hardhat compile && npx hardhat node --network hardhat --tags deploy",
-        "test-deploy": "npx hardhat compile && npx hardhat node --network arbitrum_goerli",
-        "prod-deploy": "npx hardhat compile && npx hardhat node --network arbitrum"
+        "test-deploy": "npx hardhat compile && npx hardhat node --network arbitrum_goerli --tags deploy ",
+        "prod-deploy": "npx hardhat compile && npx hardhat node --network arbitrum --tags deploy"
     },
     "repository": {
         "type": "git",
